@@ -9,7 +9,6 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login-auth-dto';
 import { RegisterDto } from './dto/register-dto-dto';
-import { UserSettings } from 'generated/prisma';
 
 @Injectable()
 export class AuthService {
