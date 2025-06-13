@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -20,11 +21,9 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const payload = await this.jwtService.verifyAsync(token);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      request.user = payload; // Asigna el payload al request
-    } catch {
+      const payload = await this.jwtService.verifyAsync<JwtPayload>(token);
+      request.user = payload;
+    } catch (error) {
       throw new UnauthorizedException("Sesión expirada");
     }
 

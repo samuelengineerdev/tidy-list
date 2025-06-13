@@ -40,52 +40,56 @@ export class AuthController {
   @ApiBody({
     description: 'Datos del nuevo usuario',
     schema: {
-      example: {
-        email: 'string',
-        password: 'string',
-        confirmPassword: 'string',
-      },
+      properties: {
+        email: { type: 'string' },
+        password: { type: 'string' },
+        confirmPassword: { type: 'string' }
+      }
     },
   })
   @ApiResponse({
     status: 201,
     description: 'Usuario creado exitosamente.',
     schema: {
-      example: {
-        statusCode: 201,
-        message: 'Usuario registrado exitosamente',
+      properties: {
+        statusCode: { type: 'number' },
+        message: { type: 'string' },
         data: {
-          id: 'string',
-          email: 'string',
-          createdAt: 'string',
-          updatedAt: 'string',
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            email: { type: 'string' },
+            createdAt: { type: 'string', format: 'date-time' },
+            updatedAt: { type: 'string', format: 'date-time' },
+          },
         },
       },
     },
   })
+
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: 'Datos inválidos o error de validación.',
     schema: {
       properties: {
         message: { type: 'array', items: { type: 'string' } },
-        error: { type: 'string', example: 'Bad Request' },
-        statusCode: { type: 'number', example: HttpStatus.BAD_REQUEST }
+        error: { type: 'string', nullable: true },
+        statusCode: { type: 'number' }
       }
     }
   })
   @ApiResponse({
-    status: 409,
+    status: HttpStatus.CONFLICT,
     description: 'El email ya está en uso.',
     schema: {
-      example: {
-        message: 'Este email ya esta en uso',
-        error: 'Conflict',
-        statusCode: 409,
-      },
+      properties: {
+        message: { type: 'string' },
+        error: { type: 'string', nullable: true },
+        statusCode: { type: 'number' },
+      }
     },
   })
-  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.' })
   async register(@Body() registerDto: RegisterDto) {
     return this.responseService.sendSuccess(
       await this.authService.register(registerDto),
@@ -104,8 +108,8 @@ export class AuthController {
     description: 'Credenciales del usuario',
     schema: {
       example: {
-        email: 'string',
-        password: 'string',
+        email: 'example@mail.com',
+        password: '123456',
       },
     },
   })
@@ -196,7 +200,6 @@ export class AuthController {
   })
   async getProfile(@Req() req: Request) {
     return this.responseService.sendSuccess(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       await req.user,
     );
   }

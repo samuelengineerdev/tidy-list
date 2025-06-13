@@ -16,8 +16,8 @@ datasource db {
 
 model User {
   id           String        @id @default(uuid())
-  email        String?       @unique
-  passwordHash String?
+  email        String        @unique
+  passwordHash String
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   settings     UserSettings?
@@ -26,10 +26,12 @@ model User {
 }
 
 model UserSettings {
-  id       String  @id @default(uuid())
-  userId   String  @unique
-  darkMode Boolean @default(false)
-  user     User    @relation(fields: [userId], references: [id])
+  id        String   @id @default(uuid())
+  darkMode  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Task {
@@ -37,21 +39,23 @@ model Task {
   name        String
   description String?
   completed   Boolean   @default(false)
-  dueDate     DateTime? // Opcional, por si querés usar fechas
+  dueDate     DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  userId      String?
-  categoryId  String?
+  userId      String
+  categoryId  String
 
-  user     User?     @relation(fields: [userId], references: [id])
-  category Category? @relation(fields: [categoryId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+  category Category @relation("CategoryTasks", fields: [categoryId], references: [id], onDelete: Cascade)
 }
 
 model Category {
-  id     String  @id @default(uuid())
-  name   String
-  userId String?
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
 
-  user  User?  @relation(fields: [userId], references: [id])
-  tasks Task[]
+  user  User   @relation(fields: [userId], references: [id])
+  tasks Task[] @relation("CategoryTasks")
 }
