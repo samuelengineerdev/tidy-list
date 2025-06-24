@@ -24,6 +24,8 @@ import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login-auth-dto';
 import { RegisterDto } from './dto/register-dto-dto';
+import { ResponseUserDto } from 'src/user/dto/response-user-dto';
+import { ResponseFormat } from 'src/response/response.interface';
 
 @ApiTags('Auth') // Agrupa los endpoints en Swagger bajo "Auth"
 @Controller('auth')
@@ -80,7 +82,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'El email ya está en uso.',
+    description: 'Ha ocurrido un conflicto.',
     schema: {
       properties: {
         message: { type: 'string' },
@@ -89,8 +91,17 @@ export class AuthController {
       }
     },
   })
-  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.' })
-  async register(@Body() registerDto: RegisterDto) {
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Error interno del servidor.', schema: {
+      properties: {
+        message: { type: 'string' },
+        error: { type: 'string', nullable: true },
+        statusCode: { type: 'number' },
+      }
+    },
+  })
+  async register(@Body() registerDto: RegisterDto): Promise<ResponseFormat<ResponseUserDto>> {
     return this.responseService.sendSuccess(
       await this.authService.register(registerDto),
       'Usuario registrado exitosamente',
@@ -99,6 +110,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe())
   @ApiOperation({
     summary: 'Iniciar sesión',
@@ -114,22 +126,28 @@ export class AuthController {
     },
   })
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'Inicio de sesión exitoso.',
     schema: {
-      example: {
-        statusCode: 200,
-        message: 'Operación exitosa',
+      properties: {
+        statusCode: { type: 'number' },
+        message: { type: 'string' },
         data: {
-          user: {
-            id: 'string',
-            email: 'string',
-            createdAt: 'string',
-            updatedAt: 'string',
-          },
-          token: 'string',
-        },
-      },
+          type: 'object',
+          properties: {
+            user: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                email: { type: 'string' },
+                createdAt: { type: 'string' },
+                updatedAt: { type: 'string' }
+              }
+            },
+            token: { type: 'string' }
+          }
+        }
+      }
     },
   })
   @ApiResponse({
@@ -138,8 +156,8 @@ export class AuthController {
     schema: {
       properties: {
         message: { type: 'array', items: { type: 'string' } },
-        error: { type: 'string', example: 'Bad Request' },
-        statusCode: { type: 'number', example: HttpStatus.BAD_REQUEST }
+        error: { type: 'string' },
+        statusCode: { type: 'number' }
       }
     }
   })
@@ -147,24 +165,34 @@ export class AuthController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Credenciales inválidas.',
     schema: {
-      example: {
-        "message": "Credenciales inválidas",
-        "errors": null,
-        "statusCode": HttpStatus.UNAUTHORIZED,
+      properties: {
+        message: { type: 'string' },
+        error: { type: 'string' },
+        statusCode: { type: 'number' }
       }
     }
   })
   @ApiResponse({
     status: 500,
     description: 'Error interno del servidor.',
+    schema: {
+      properties: {
+        message: { type: 'string' },
+        error: { type: 'string', nullable: true },
+        statusCode: { type: 'number' },
+      }
+    },
   })
   async login(@Body() loginDto: LoginDto) {
     return this.responseService.sendSuccess(
       await this.authService.login(loginDto),
+      'Usurio logueado exitosamente!',
+      HttpStatus.OK
     );
   }
 
   @Get('profile')
+  @HttpCode(HttpStatus.OK)
   @ApiBearerAuth('jwt')
   @UseGuards(AuthGuard)
   @ApiOperation({
@@ -175,32 +203,36 @@ export class AuthController {
     status: 200,
     description: 'Perfil del usuario.',
     schema: {
-      example: {
-        statusCode: 200,
-        message: 'Perfil del usuario',
+      properties: {
+        statusCode: { type: 'number' },
+        message: { type: 'string' },
         data: {
-          id: 'string',
-          email: 'string',
-          createdAt: 'string',
-          updatedAt: 'string',
-        },
-      },
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            email: { type: 'string' },
+            createdAt: { type: 'string' },
+            updatedAt: { type: 'string' },
+            iat: { type: 'number' }
+          }
+        }
+      }
     },
   })
   @ApiResponse({
     status: 401,
     description: 'Token inválido o no proporcionado.',
     schema: {
-      example: {
-        statusCode: 401,
-        message: 'Sesión expirada',
-        error: 'Unauthorized'
+      properties: {
+        message: { type: 'string' },
+        error: { type: 'string' },
+        statusCode: { type: 'number' }
       }
     }
   })
-  async getProfile(@Req() req: Request) {
+  getProfile(@Req() req: Request) {
     return this.responseService.sendSuccess(
-      await req.user,
+      req.user,
     );
   }
 }
