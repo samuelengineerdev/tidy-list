@@ -140,8 +140,8 @@ export class AuthController {
               properties: {
                 id: { type: 'string' },
                 email: { type: 'string' },
-                createdAt: { type: 'string' },
-                updatedAt: { type: 'string' }
+                createdAt: { type: 'string', format: 'date-time' },
+                updatedAt: { type: 'string', format: 'date-time' },
               }
             },
             token: { type: 'string' }
@@ -156,7 +156,7 @@ export class AuthController {
     schema: {
       properties: {
         message: { type: 'array', items: { type: 'string' } },
-        error: { type: 'string' },
+        errors: { type: 'string' },
         statusCode: { type: 'number' }
       }
     }
@@ -167,7 +167,7 @@ export class AuthController {
     schema: {
       properties: {
         message: { type: 'string' },
-        error: { type: 'string' },
+        errors: { type: 'string' },
         statusCode: { type: 'number' }
       }
     }
@@ -211,8 +211,8 @@ export class AuthController {
           properties: {
             id: { type: 'string' },
             email: { type: 'string' },
-            createdAt: { type: 'string' },
-            updatedAt: { type: 'string' },
+            createdAt: { type: 'string', format: 'date-time' },
+            updatedAt: { type: 'string', format: 'date-time' },
             iat: { type: 'number' }
           }
         }
@@ -220,12 +220,12 @@ export class AuthController {
     },
   })
   @ApiResponse({
-    status: 401,
-    description: 'Token inválido o no proporcionado.',
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'No autorizado.',
     schema: {
       properties: {
         message: { type: 'string' },
-        error: { type: 'string' },
+        errors: { type: 'string' },
         statusCode: { type: 'number' }
       }
     }
