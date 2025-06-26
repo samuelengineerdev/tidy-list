@@ -3,6 +3,7 @@ import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
 import { User } from 'src/auth/user.decorator';
+import { ApiDefaultResponses } from 'src/common/decorators/swagger-default-responses.decorator';
 import { ResponseService } from 'src/response/response.service';
 import { CreateUserSettingsDto } from './dto/create-user-settings.dto';
 import { UpdateUserSettingsDto } from './dto/update-user-settings.dto';
@@ -17,64 +18,29 @@ export class UserController {
     private readonly responseService: ResponseService
   ) { }
 
-  @Post('user-settings')
-  @UsePipes(new ValidationPipe())
-  @ApiOperation({ summary: 'Crear configuracion de usuario', description: 'Este endpoint crea una nueva configuracion de usuario.' })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Configuracion creada exitosamente.',
-    schema: {
-      example: {
-        statusCode: HttpStatus.CREATED,
-        message: 'Configuracion creada exitosamente',
-        data: {
-          id: 'string',
-          darkMode: 'boolean',
-          userId: 'string',
-          createdAt: 'date',
-          updatedAt: 'date',
-        },
-      },
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.CONFLICT,
-    description: 'Se ha producido un conflicto.',
-    schema: {
-      example: {
-        message: 'string.',
-        error: 'string',
-        statusCode: HttpStatus.CONFLICT,
-      },
-    },
-  })
-  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.' })
-  async createUserSettings(@Body() createUserSettingsDto: CreateUserSettingsDto, @User() user: JwtPayload) {
-    return this.responseService.sendSuccess(
-      await this.userService.createUserSettings({ ...createUserSettingsDto, userId: user.id })
-    );
-  }
-
   @Get('user-settings')
-  @ApiOperation({ summary: 'Obtener la configuracion del usuario', description: 'Obtiene la configuracion del usuario logueado.' })
+  @ApiOperation({ summary: 'Obtener la configuracion del usuario', description: 'Obtiene la configuracion del usuario.' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Configuracion',
+    description: 'Configuracion obtenida.',
     schema: {
-      example: {
-        statusCode: HttpStatus.OK,
-        message: 'configuraciones',
+      properties: {
+        statusCode: { type: 'number' },
+        message: { type: 'string' },
         data: {
-          id: 'string',
-          darkMode: 'boolean',
-          userId: 'string',
-          createdAt: 'date',
-          updatedAt: 'date',
-        },
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            darkMode: { type: 'boolean' },
+            userId: { type: 'string' },
+            createdAt: { type: 'string', format: 'date-time' },
+            updatedAt: { type: 'string', format: 'date-time' },
+          },
+        }
       },
     },
   })
-  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.' })
+  @ApiDefaultResponses({ includeNotFound: true })
   async getUserSettings(@User() user: JwtPayload) {
     return this.responseService.sendSuccess(
       await this.userService.getUserSettings(user.id)
@@ -82,25 +48,28 @@ export class UserController {
   }
 
   @Patch('user-settings')
-  @ApiOperation({ summary: 'Actualizar la configuracion del usuario', description: 'Actualiza la configuracion del usuario logueado.' })
+  @ApiOperation({ summary: 'Crear o actualizar la configuracion del usuario', description: 'Crea o actualiza la configuracion del usuario.' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Configuracion actualizada',
+    description: 'Configuracion creada o actualizada.',
     schema: {
-      example: {
-        statusCode: HttpStatus.OK,
-        message: 'configuracion actualizada',
-        data: [{
-          id: 'string',
-          darkMode: 'boolean',
-          userId: 'string',
-          createdAt: 'date',
-          updatedAt: 'date',
-        }],
+      properties: {
+        statusCode: { type: 'number' },
+        message: { type: 'string' },
+        data: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            darkMode: { type: 'boolean' },
+            userId: { type: 'string' },
+            createdAt: { type: 'string', format: 'date-time' },
+            updatedAt: { type: 'string', format: 'date-time' },
+          },
+        }
       },
     },
   })
-  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.' })
+  @ApiDefaultResponses()
   async updateUserSettings(@User() user: JwtPayload, @Body() updateUserSettingsDto: UpdateUserSettingsDto) {
     return this.responseService.sendSuccess(
       await this.userService.updateUserSettings({ ...updateUserSettingsDto, userId: user.id })

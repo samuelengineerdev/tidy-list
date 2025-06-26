@@ -20,7 +20,7 @@ export class CategoryController {
   @Post()
   @UsePipes(new ValidationPipe())
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Crear categoria', description: 'Este endpoint crea una nueva categoria para el inventario.' })
+  @ApiOperation({ summary: 'Crear categoria', description: 'Este endpoint crea una nueva categoria para las tareas.' })
   @ApiBody({
     description: 'Datos de la nueva categoria',
     schema: {

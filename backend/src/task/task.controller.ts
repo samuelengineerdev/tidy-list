@@ -1,12 +1,13 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
 import { User } from 'src/auth/user.decorator';
 import { ResponseService } from 'src/response/response.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { TaskService } from './task.service';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { ApiDefaultResponses } from '../common/decorators/swagger-default-responses.decorator'
 
 @Controller('task')
 @ApiBearerAuth('jwt')
@@ -25,66 +26,68 @@ export class TaskController {
     status: HttpStatus.CREATED,
     description: 'Tarea creada exitosamente.',
     schema: {
-      example: {
-        statusCode: HttpStatus.CREATED,
-        message: 'Tarea creada exitosamente',
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number' },
+        message: { type: 'string' },
         data: {
-          id: 'string',
-          name: 'string',
-          description: 'string',
-          dueDate: 'date',
-          userId: 'string',
-          categoryId: 'string',
-          completed: 'boolean',
-          createdAt: 'date',
-          updatedAt: 'date',
-        },
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            name: { type: 'string' },
+            description: { type: 'string' },
+            dueDate: { type: 'string', format: 'date-time' },
+            userId: { type: 'string' },
+            categoryId: { type: 'string' },
+            completed: { type: 'boolean' },
+            createdAt: { type: 'string', format: 'date-time' },
+            updatedAt: { type: 'string', format: 'date-time' },
+          },
+        }
       },
     },
   })
-  @ApiResponse({
-    status: HttpStatus.CONFLICT,
-    description: 'Ya has creado esta tarea.',
-    schema: {
-      example: {
-        message: 'Ya has creado esta tarea.',
-        error: 'Conflict',
-        statusCode: HttpStatus.CONFLICT,
-      },
-    },
-  })
-  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.' })
+  @ApiDefaultResponses({ includeConflict: true, includeNotFound: true })
   async create(@Body() createTaskDto: CreateTaskDto, @User() user: JwtPayload) {
     return this.responseService.sendSuccess(
-      await this.taskService.create({ ...createTaskDto, userId: user.id })
+      await this.taskService.create({ ...createTaskDto, userId: user.id }),
+      'Tarea creada exitosamente',
+      HttpStatus.CREATED
     );
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Obtener todas las tareas', description: 'Obtiene todas las categorias por el usuario logueado.' })
+  @ApiOperation({ summary: 'Obtener todas las tareas', description: 'Obtiene todas las tareas.' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Tareas.',
     schema: {
-      example: {
-        statusCode: HttpStatus.OK,
-        message: 'Tareas',
-        data: [{
-          id: 'string',
-          name: 'string',
-          description: 'string',
-          dueDate: 'date',
-          userId: 'string',
-          categoryId: 'string',
-          completed: 'boolean',
-          createdAt: 'date',
-          updatedAt: 'date',
-        }],
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number' },
+        message: { type: 'string' },
+        data: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              name: { type: 'string' },
+              description: { type: 'string' },
+              completed: { type: 'boolean' },
+              dueDate: { type: 'string', format: 'date-time' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+              userId: { type: 'string' },
+              categoryId: { type: 'string' },
+            }
+          }
+        }
       },
     },
   })
-  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.' })
+  @ApiDefaultResponses()
   async findAll(@User() user: JwtPayload) {
     return this.responseService.sendSuccess(
       await this.taskService.findAll(user.id)
@@ -95,38 +98,29 @@ export class TaskController {
   @ApiOperation({ summary: 'Obtener tarea por id', description: 'Obtiene una tarea por su id.' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Tareas.',
+    description: 'Tarea obtenida.',
     schema: {
-      example: {
-        statusCode: HttpStatus.OK,
-        message: 'Tareas',
+      properties: {
+        statusCode: { type: 'number' },
+        message: { type: 'string' },
         data: {
-          id: 'string',
-          name: 'string',
-          description: 'string',
-          dueDate: 'date',
-          userId: 'string',
-          categoryId: 'string',
-          completed: 'boolean',
-          createdAt: 'date',
-          updatedAt: 'date',
-        },
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            name: { type: 'string' },
+            description: { type: 'string' },
+            dueDate: { type: 'string', format: 'date-time' },
+            userId: { type: 'string' },
+            categoryId: { type: 'string' },
+            completed: { type: 'boolean' },
+            createdAt: { type: 'string', format: 'date-time' },
+            updatedAt: { type: 'string', format: 'date-time' },
+          },
+        }
       },
     },
   })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Categoria.',
-    schema: {
-      example: {
-        statusCode: HttpStatus.NOT_FOUND,
-        errors: "string",
-        message: 'No se encontro esta tarea por el id: string',
-
-      },
-    },
-  })
-  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.' })
+  @ApiDefaultResponses({ includeNotFound: true })
   async findOne(@Param('id') id: string) {
     return this.responseService.sendSuccess(
       await this.taskService.findOne(id)
@@ -134,71 +128,68 @@ export class TaskController {
   }
 
   @Get('by-category/:categoryId')
-  @ApiOperation({ summary: 'Obtener las tareas por categoria', description: 'Obtiene las tareas por la categoria' })
+  @ApiOperation({ summary: 'Obtener tareas por categoria', description: 'Obtiene las tarea por su categoryId' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Tareas.',
+    description: 'Tareas obtenidas.',
     schema: {
-      example: {
-        statusCode: HttpStatus.OK,
-        message: 'Tareas',
-        data: [{
-          id: 'string',
-          name: 'string',
-          description: 'string',
-          dueDate: 'date',
-          userId: 'string',
-          categoryId: 'string',
-          completed: 'boolean',
-          createdAt: 'date',
-          updatedAt: 'date',
-        }],
+      properties: {
+        statusCode: { type: 'number' },
+        message: { type: 'string' },
+        data: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              name: { type: 'string' },
+              description: { type: 'string' },
+              dueDate: { type: 'string', format: 'date-time' },
+              userId: { type: 'string' },
+              categoryId: { type: 'string' },
+              completed: { type: 'boolean' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+            },
+          }
+        }
       },
     },
   })
-  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.' })
-  async findByCategory(@Param('id') id: string) {
+  @ApiDefaultResponses()
+  async findByCategory(@Param('categoryId') categoryId: string) {
     return this.responseService.sendSuccess(
-      await this.taskService.findByCategory(id)
+      await this.taskService.findByCategory(categoryId)
     );
   }
 
   @Patch()
-  @ApiOperation({ summary: 'Actualizar tarea', description: 'Actualiza una tarea por su id' })
+  @ApiOperation({ summary: 'Actualizar tarea', description: 'Actualiza una tarea' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Categorias.',
+    description: 'Tarea actualizada.',
     schema: {
-      example: {
-        statusCode: HttpStatus.OK,
-        message: 'Tarea actualizada correctamente',
+      properties: {
+        statusCode: { type: 'number' },
+        message: { type: 'string' },
         data: {
-          id: 'string',
-          name: 'string',
-          description: 'string',
-          dueDate: 'date',
-          userId: 'string',
-          categoryId: 'string',
-          completed: 'boolean',
-          createdAt: 'date',
-          updatedAt: 'date',
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            name: { type: 'string' },
+            description: { type: 'string' },
+            dueDate: { type: 'string', format: 'date-time' },
+            userId: { type: 'string' },
+            categoryId: { type: 'string' },
+            completed: { type: 'boolean' },
+            createdAt: { type: 'string', format: 'date-time' },
+            updatedAt: { type: 'string', format: 'date-time' },
+          }
         },
       },
     },
   })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Tarea.',
-    schema: {
-      example: {
-        statusCode: HttpStatus.NOT_FOUND,
-        errors: "string",
-        message: 'No se encontro esta tarea por el id: string',
-
-      },
-    },
-  })
-  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.' })
+  @ApiDefaultResponses({ includeNotFound: true })
   async update(@Body() updateTaskDto: UpdateTaskDto, @User() user: JwtPayload) {
     return this.responseService.sendSuccess(
       await this.taskService.update({ ...updateTaskDto, userId: user.id })
@@ -209,28 +200,29 @@ export class TaskController {
   @ApiOperation({ summary: 'Eliminar tarea', description: 'Elimina una tarea por su id' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Eliminar tarea.',
+    description: 'Tarea eliminada.',
     schema: {
-      example: {
-        statusCode: HttpStatus.OK,
-        message: 'Categoria eliminada correctamente',
-        data: null,
+      properties: {
+        statusCode: { type: 'number' },
+        message: { type: 'string' },
+        data: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            name: { type: 'string' },
+            description: { type: 'string' },
+            dueDate: { type: 'string', format: 'date-time' },
+            userId: { type: 'string' },
+            categoryId: { type: 'string' },
+            completed: { type: 'boolean' },
+            createdAt: { type: 'string', format: 'date-time' },
+            updatedAt: { type: 'string', format: 'date-time' },
+          },
+        }
       },
     },
   })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Categoria.',
-    schema: {
-      example: {
-        statusCode: HttpStatus.NOT_FOUND,
-        errors: "string",
-        message: 'No se encontro esta tarea por el id: string',
-
-      },
-    },
-  })
-  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.' })
+  @ApiDefaultResponses({ includeNotFound: true })
   async remove(@Param('id') id: string) {
     return this.responseService.sendSuccess(
       await this.taskService.remove(id)
