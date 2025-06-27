@@ -18,7 +18,24 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Tidy List API')
-    .setDescription('API principal de Tidy List')
+    .setDescription(
+      `Tidy List is a RESTful API developed as part of my personal portfolio to showcase my skills in backend development.
+
+This API allows users to manage personal task lists and categories. It is fully documented with Swagger, secured with JWT authentication, and includes unit testing to ensure reliability and maintainability.
+
+Built with:
+- NestJS (TypeScript)
+- PostgreSQL
+- Prisma ORM
+- Swagger for API documentation
+- Unit testing with Jest
+
+This project is open-source and publicly available for review.
+
+[GitHub Repository](https://github.com/samuelengineerdev/tidy-list/tree/main/backend)  
+[My Portfolio](https://www.samuelengineer.dev)
+`
+    )
     .setVersion('1.0')
     .addTag('Tidy List')
     .addBearerAuth(
@@ -32,6 +49,7 @@ async function bootstrap() {
       'jwt',
     )
     .build();
+
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('', app, documentFactory);
