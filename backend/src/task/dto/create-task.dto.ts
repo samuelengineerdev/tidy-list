@@ -4,27 +4,27 @@ import { IsDate, IsNotEmpty, IsOptional, IsString } from "class-validator"
 
 export class CreateTaskDto {
     @ApiProperty({ type: 'string' })
-    @IsNotEmpty({ message: 'El nombre es obligatorio' })
-    @IsString({ message: 'El nombre debe ser un texto' })
+    @IsNotEmpty({ message: 'Name is required' })
+    @IsString({ message: 'Name must be a string' })
     @Transform(({ value }) => value.trim())
     name: string
 
     @ApiProperty({ type: 'string' })
     @IsOptional()
-    @IsString({ message: 'La descripción debe ser un texto' })
+    @IsString({ message: 'Description must be a string' })
     @Transform(({ value }) => value?.trim())
     description?: string
 
     @ApiProperty({ type: 'string', format: 'date-time' })
     @IsOptional()
     @Type(() => Date)
-    @IsDate({ message: 'Debe ser una fecha valida' })
+    @IsDate({ message: 'Must be a valid date' })
     dueDate?: Date
 
-    userId: string
+    userId: number
 
     @ApiProperty({ type: 'string' })
-    @IsNotEmpty({ message: 'El nombre es obligatorio' })
-    @IsString({ message: 'El categoryId debe ser un texto' })
-    categoryId: string
-} 
+    @IsNotEmpty({ message: 'Category ID is required' })
+    @IsString({ message: 'CategoryId must be a string' })
+    categoryId: number
+}

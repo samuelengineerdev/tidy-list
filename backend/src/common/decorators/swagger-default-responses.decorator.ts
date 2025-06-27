@@ -1,4 +1,3 @@
-// src/common/decorators/swagger-default-responses.decorator.ts
 import { applyDecorators, HttpStatus } from '@nestjs/common';
 import {
     ApiUnauthorizedResponse,
@@ -13,7 +12,7 @@ export function ApiDefaultResponses(options?: {
 }) {
     return applyDecorators(
         ApiUnauthorizedResponse({
-            description: 'No autorizado.',
+            description: 'Unauthorized.',
             schema: {
                 properties: {
                     message: { type: 'string' },
@@ -24,7 +23,7 @@ export function ApiDefaultResponses(options?: {
         }),
         options?.includeNotFound
             ? ApiNotFoundResponse({
-                description: 'No encontrado.',
+                description: 'Not found.',
                 schema: {
                     properties: {
                         message: { type: 'string' },
@@ -36,7 +35,7 @@ export function ApiDefaultResponses(options?: {
             : (target, key, descriptor) => descriptor,
         options?.includeConflict
             ? ApiConflictResponse({
-                description: 'Conflicto.',
+                description: 'Conflict.',
                 schema: {
                     properties: {
                         message: { type: 'string' },
@@ -47,7 +46,7 @@ export function ApiDefaultResponses(options?: {
             })
             : (target, key, descriptor) => descriptor,
         ApiInternalServerErrorResponse({
-            description: 'Error interno del servidor.',
+            description: 'Internal server error.',
             schema: {
                 properties: {
                     message: { type: 'string' },

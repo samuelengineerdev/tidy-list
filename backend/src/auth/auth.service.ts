@@ -27,7 +27,7 @@ export class AuthService {
         where: { email },
       });
 
-      if (existingEmail) throw new ConflictException('Este email ya esta en uso');
+      if (existingEmail) throw new ConflictException('This email is already in use.');
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -47,7 +47,7 @@ export class AuthService {
       if (error instanceof ConflictException) {
         throw error;
       }
-      throw new InternalServerErrorException("Ha ocurrido un error al registrarse, por favor intentar de nuevo.");
+      throw new InternalServerErrorException("An error occurred during registration, please try again.");
     }
   }
 
@@ -57,7 +57,7 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
-      throw new UnauthorizedException('Credenciales inválidas');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const { passwordHash, ...userToResponse } = user;

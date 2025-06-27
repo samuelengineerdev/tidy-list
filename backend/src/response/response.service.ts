@@ -5,7 +5,7 @@ import { ResponseFormat } from './response.interface';
 export class ResponseService {
   sendSuccess<T>(
     data: T,
-    message: string = 'Operación exitosa',
+    message: string = 'Successful operation',
     statusCode: number = 200,
   ): ResponseFormat<T> {
     return {

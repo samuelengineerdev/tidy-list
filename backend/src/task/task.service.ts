@@ -8,49 +8,60 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 export class TaskService {
   constructor(private readonly prismaService: PrismaService) { }
 
-  async existTask(id: string): Promise<Task> {
+  async existTask(id: number): Promise<Task> {
     const foundTask = await this.prismaService.task.findFirst({ where: { id } });
-    if (!foundTask) throw new NotFoundException(`No se encontro esta tarea por el id: ${id}`);
+    if (!foundTask) throw new NotFoundException(`Task not found with id: ${id}`);
 
     return foundTask;
   }
 
   async create(createTaskDto: CreateTaskDto): Promise<Task> {
-    const userHaveTask = await this.prismaService.task.findFirst({ where: { name: createTaskDto.name, userId: createTaskDto.userId } });
-    const existThisCategory = await this.prismaService.category.findFirst({ where: { id: createTaskDto.categoryId } });
+    const userHasTask = await this.prismaService.task.findFirst({
+      where: { name: createTaskDto.name, userId: createTaskDto.userId },
+    });
 
-    if (userHaveTask) {
-      throw new ConflictException("Esta tarea ya ha sido agregada");
+    const categoryExists = await this.prismaService.category.findFirst({
+      where: { id: createTaskDto.categoryId },
+    });
+
+    if (userHasTask) {
+      throw new ConflictException("This task has already been added");
     }
 
-    if (!existThisCategory) {
-      throw new NotFoundException(`La categoria con el id: ${createTaskDto.categoryId} no fue encontrada`);
+    if (!categoryExists) {
+      throw new NotFoundException(`Category with id: ${createTaskDto.categoryId} was not found`);
     }
 
     return await this.prismaService.task.create({ data: createTaskDto });
   }
 
-  async findAll(userId: string): Promise<Task[]> {
+  async findAll(userId: number): Promise<Task[]> {
     return await this.prismaService.task.findMany({ where: { userId } });
   }
 
-  async findOne(id: string): Promise<Task> {
+  async findOne(id: number): Promise<Task> {
     return await this.existTask(id);
   }
 
-  async findByCategory(categoryId: string): Promise<Task[]> {
-    return await this.prismaService.task.findMany({ where: { categoryId } })
+  async findByCategory(categoryId: number): Promise<Task[]> {
+    return await this.prismaService.task.findMany({ where: { categoryId } });
   }
 
   async update(updateTaskDto: UpdateTaskDto): Promise<Task> {
     await this.existTask(updateTaskDto.id);
-    const foundCategory = await this.prismaService.category.findFirst({ where: { id: updateTaskDto.categoryId } })
-    if (!foundCategory) throw new NotFoundException(`La categoria con el id: ${updateTaskDto.categoryId} no fue encontrada`);
+    const foundCategory = await this.prismaService.category.findFirst({
+      where: { id: updateTaskDto.categoryId },
+    });
+    if (!foundCategory)
+      throw new NotFoundException(`Category with id: ${updateTaskDto.categoryId} was not found`);
 
-    return this.prismaService.task.update({ data: updateTaskDto, where: { id: updateTaskDto.id } })
+    return this.prismaService.task.update({
+      data: updateTaskDto,
+      where: { id: updateTaskDto.id },
+    });
   }
 
-  async remove(id: string): Promise<Task> {
+  async remove(id: number): Promise<Task> {
     await this.existTask(id);
     return this.prismaService.task.delete({ where: { id } });
   }

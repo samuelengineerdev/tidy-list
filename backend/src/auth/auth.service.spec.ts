@@ -40,7 +40,7 @@ describe('AuthService (unit tests)', () => {
   });
 
   describe('register()', () => {
-    it('debería registrar un nuevo usuario si el email no existe', async () => {
+    it('should register a new user if the email does not exist', async () => {
       const dto = { email: 'test@example.com', password: '123456', confirmPassword: '123456' };
       const fecha = new Date();
 
@@ -63,7 +63,7 @@ describe('AuthService (unit tests)', () => {
       }));
     });
 
-    it('debería lanzar ConflictException si el email ya existe', async () => {
+    it('should throw ConflictException if the email already exists', async () => {
       const dto = { email: 'existing@example.com', password: '123456', confirmPassword: '123456' };
       prismaMock.user.findUnique.mockResolvedValue({ id: 'user123' });
 
@@ -72,7 +72,7 @@ describe('AuthService (unit tests)', () => {
   });
 
   describe('login()', () => {
-    it('debería retornar un token válido si las credenciales son correctas', async () => {
+    it('should return a valid token if the credentials are correct', async () => {
       const dto = { email: 'test@example.com', password: '123456' };
 
       prismaMock.user.findUnique.mockResolvedValue({
@@ -87,11 +87,11 @@ describe('AuthService (unit tests)', () => {
       const result = await service.login(dto);
 
       expect(result).toEqual(
-        { user: {id: 'user123', email: dto.email}, token: 'fake-jwt-token' }
+        { user: { id: 'user123', email: dto.email }, token: 'fake-jwt-token' }
       );
     });
 
-    it('debería lanzar UnauthorizedException si el usuario no existe', async () => {
+    it('should throw UnauthorizedException if the user does not exist', async () => {
       const dto = { email: 'unknown@example.com', password: '123456' };
 
       prismaMock.user.findUnique.mockResolvedValue(null);
@@ -99,7 +99,7 @@ describe('AuthService (unit tests)', () => {
       await expect(service.login(dto)).rejects.toThrow(UnauthorizedException);
     });
 
-    it('debería lanzar UnauthorizedException si la contraseña es incorrecta', async () => {
+    it('should throw UnauthorizedException if the password is incorrect', async () => {
       const dto = { email: 'test@example.com', password: 'wrong' };
 
       prismaMock.user.findUnique.mockResolvedValue({

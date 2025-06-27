@@ -12,7 +12,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      transform: true, // convierte payloads al tipo correcto (útil con @Type(() => Date))
+      transform: true,
     }),
   );
 

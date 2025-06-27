@@ -33,19 +33,19 @@ describe('CategoryService (unit tests)', () => {
   });
 
   describe('create()', () => {
-    it('debería crear una nueva categoría si no existe', async () => {
-      const dto = { name: 'Trabajo', userId: 'user123' };
+    it('should create a new category if it does not exist', async () => {
+      const dto = { name: 'Work', userId: 1 };
       prismaMock.category.findFirst.mockResolvedValue(null);
-      prismaMock.category.create.mockResolvedValue({ id: 'cat1', ...dto });
+      prismaMock.category.create.mockResolvedValue({ id: 1, ...dto });
 
       const result = await service.create(dto);
 
-      expect(result).toEqual({ id: 'cat1', ...dto });
+      expect(result).toEqual({ id: 1, ...dto });
       expect(prismaMock.category.create).toHaveBeenCalledWith({ data: dto });
     });
 
-    it('debería lanzar ConflictException si ya existe una categoría con el mismo nombre y usuario', async () => {
-      const dto = { name: 'Trabajo', userId: 'user123' };
+    it('should throw ConflictException if a category with the same name and user already exists', async () => {
+      const dto = { name: 'Work', userId: 1 };
       prismaMock.category.findFirst.mockResolvedValue({ id: 'existing-id' });
 
       await expect(service.create(dto)).rejects.toThrow(ConflictException);
@@ -53,9 +53,9 @@ describe('CategoryService (unit tests)', () => {
   });
 
   describe('findAll()', () => {
-    it('debería retornar todas las categorías del usuario', async () => {
-      const userId = 'user123';
-      const categories = [{ id: 'cat1', name: 'Trabajo', userId }];
+    it('should return all categories for the user', async () => {
+      const userId = 1;
+      const categories = [{ id: 1, name: 'Work', userId }];
       prismaMock.category.findMany.mockResolvedValue(categories);
 
       const result = await service.findAll(userId);
@@ -64,41 +64,41 @@ describe('CategoryService (unit tests)', () => {
   });
 
   describe('findOne()', () => {
-    it('debería retornar una categoría por ID', async () => {
-      const category = { id: 'cat1', name: 'Trabajo', userId: 'user123' };
+    it('should return a category by ID', async () => {
+      const category = { id: 1, name: 'Work', userId: 1 };
       prismaMock.category.findFirst.mockResolvedValue(category);
 
-      const result = await service.findOne('cat1');
+      const result = await service.findOne(1);
       expect(result).toEqual(category);
     });
 
-    it('debería lanzar NotFoundException si no existe', async () => {
+    it('should throw NotFoundException if it does not exist', async () => {
       prismaMock.category.findFirst.mockResolvedValue(null);
 
-      await expect(service.findOne('catX')).rejects.toThrow(NotFoundException);
+      await expect(service.findOne(1)).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('update()', () => {
-    it('debería actualizar una categoría existente', async () => {
-      const category = { id: 'cat1', name: 'Viejo', userId: 'user123' };
-      const updateDto = { name: 'Nuevo', userId: 'user123' };
+    it('should update an existing category', async () => {
+      const category = { id: 1, name: 'Old', userId: 1 };
+      const updateDto = { name: 'New', userId: 1 };
 
       prismaMock.category.findFirst.mockResolvedValue(category);
       prismaMock.category.update.mockResolvedValue({ ...category, ...updateDto });
 
-      const result = await service.update('cat1', updateDto);
+      const result = await service.update(1, updateDto);
       expect(result).toEqual({ ...category, ...updateDto });
     });
   });
 
   describe('remove()', () => {
-    it('debería eliminar una categoría existente', async () => {
-      const category = { id: 'cat1', name: 'Trabajo', userId: 'user123' };
+    it('should remove an existing category', async () => {
+      const category = { id: 1, name: 'Work', userId: 1 };
       prismaMock.category.findFirst.mockResolvedValue(category);
       prismaMock.category.delete.mockResolvedValue(category);
 
-      const result = await service.remove('cat1');
+      const result = await service.remove(1);
       expect(result).toEqual(category);
     });
   });

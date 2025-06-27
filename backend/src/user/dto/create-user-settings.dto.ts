@@ -3,9 +3,9 @@ import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator"
 
 export class CreateUserSettingsDto {
     @ApiProperty({ example: 'boolean' })
-    @IsBoolean({ message: 'El darkMode debe ser string' })
+   @IsBoolean({ message: 'darkMode must be a boolean' })
     @IsOptional()
     darkMode: boolean
 
-    userId: string
+    userId: number
 }

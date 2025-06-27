@@ -23,7 +23,7 @@ export function Match(
         },
         defaultMessage(args: ValidationArguments) {
           const [relatedPropertyName] = args.constraints;
-          return `${args.property} debe coincidir con ${relatedPropertyName}`;
+          return `${args.property} must match ${relatedPropertyName}`;
         },
       },
     });

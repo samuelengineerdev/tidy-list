@@ -7,6 +7,7 @@ import { ResponseService } from 'src/response/response.service';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { ApiDefaultResponses } from 'src/common/decorators/swagger-default-responses.decorator';
 
 @Controller('category')
 @ApiBearerAuth('jwt')
@@ -20,9 +21,9 @@ export class CategoryController {
   @Post()
   @UsePipes(new ValidationPipe())
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Crear categoria', description: 'Este endpoint crea una nueva categoria para las tareas.' })
+  @ApiOperation({ summary: 'Create category', description: 'This endpoint creates a new category for tasks.' })
   @ApiBody({
-    description: 'Datos de la nueva categoria',
+    description: 'New category data',
     schema: {
       example: {
         name: 'string',
@@ -31,70 +32,39 @@ export class CategoryController {
   })
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'Categoria creada exitosamente.',
+    description: 'Category created successfully.',
     schema: {
       properties: {
         statusCode: { type: 'number' },
         message: { type: 'string' },
         data: {
           type: 'object', properties: {
-            id: { type: 'string' },
+            id: { type: 'number' },
             name: { type: 'string' },
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' },
-            userId: { type: 'string' },
+            userId: { type: 'number' },
           },
         }
       },
     },
   })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'No autorizado.',
-    schema: {
-      properties: {
-        message: { type: 'string' },
-        errors: { type: 'string' },
-        statusCode: { type: 'number' },
-      },
-    },
-  })
 
-  @ApiResponse({
-    status: HttpStatus.CONFLICT,
-    description: 'Ha ocurrido un conflicto.',
-    schema: {
-      properties: {
-        message: { type: 'string' },
-        errors: { type: 'string' },
-        statusCode: { type: 'number' },
-      },
-    },
-  })
-
-  @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.', schema: {
-      properties: {
-        message: { type: 'string' },
-        errors: { type: 'string' },
-        statusCode: { type: 'number' },
-      },
-    },
-  })
+  @ApiDefaultResponses({ includeConflict: true })
   async create(@Body() createCategoryDto: CreateCategoryDto, @User() user: JwtPayload) {
     return this.responseService.sendSuccess(
       await this.categoryService.create({ ...createCategoryDto, userId: user.id }),
-      'Categoria creada exitosamente',
+      'Category created successfully.',
       HttpStatus.CREATED
     );
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Obtener todas las categorias', description: 'Obtiene todas las categorias.' })
+  @ApiOperation({ summary: 'Get all categories', description: 'Retrieves all categories.' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Categorías.',
+    description: 'Categories.',
     schema: {
       type: 'object',
       properties: {
@@ -105,11 +75,11 @@ export class CategoryController {
           items: {
             type: 'object',
             properties: {
-              id: { type: 'string' },
+              id: { type: 'number' },
               name: { type: 'string' },
               createdAt: { type: 'string', format: 'date-time' },
               updatedAt: { type: 'string', format: 'date-time' },
-              userId: { type: 'string' },
+              userId: { type: 'number' },
             },
           },
         },
@@ -117,38 +87,20 @@ export class CategoryController {
     },
   })
 
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'No autorizado.',
-    schema: {
-      properties: {
-        message: { type: 'string' },
-        errors: { type: 'string' },
-        statusCode: { type: 'number' },
-      },
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.', schema: {
-      properties: {
-        message: { type: 'string' },
-        errors: { type: 'string' },
-        statusCode: { type: 'number' },
-      },
-    },
-  })
+  @ApiDefaultResponses()
   async findAll(@User() user: JwtPayload) {
     return this.responseService.sendSuccess(
-      await this.categoryService.findAll(user.id)
+      await this.categoryService.findAll(user.id),
+      'Categories'
     );
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Obtener categoria por id', description: 'Obtiene una categoria por su id.' })
+  @ApiOperation({ summary: 'Get category by id', description: 'Retrieves a category by its id.' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Categoría.',
+    description: 'Category.',
     schema: {
       type: 'object',
       properties: {
@@ -157,59 +109,30 @@ export class CategoryController {
         data: {
           type: 'object',
           properties: {
-            id: { type: 'string' },
+            id: { type: 'number' },
             name: { type: 'string' },
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' },
-            userId: { type: 'string' },
+            userId: { type: 'number' },
           },
         },
       },
     },
   })
 
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'No autorizado.',
-    schema: {
-      properties: {
-        message: { type: 'string' },
-        errors: { type: 'string' },
-        statusCode: { type: 'number' },
-      },
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Categoria no encontrada.',
-    schema: {
-      properties: {
-        message: { type: 'string' },
-        errors: { type: 'string' },
-        statusCode: { type: 'number' },
-      },
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.', schema: {
-      properties: {
-        message: { type: 'string' },
-        errors: { type: 'string' },
-        statusCode: { type: 'number' },
-      },
-    },
-  })
-  async findOne(@Param('id') id: string) {
+  @ApiDefaultResponses({ includeNotFound: true })
+  async findOne(@Param('id') id: number) {
     return this.responseService.sendSuccess(
-      await this.categoryService.findOne(id)
+      await this.categoryService.findOne(id),
+      'Category retrieved.'
     );
   }
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Actualizar categoria', description: 'Actualiza una categoria por su id' })
+  @ApiOperation({ summary: 'Update category', description: 'Updates a category by its id' })
   @ApiBody({
-    description: 'Datos de la categoria',
+    description: 'Category data',
     schema: {
       example: {
         name: 'string',
@@ -218,7 +141,7 @@ export class CategoryController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Categoría.',
+    description: 'Category.',
     schema: {
       type: 'object',
       properties: {
@@ -227,60 +150,31 @@ export class CategoryController {
         data: {
           type: 'object',
           properties: {
-            id: { type: 'string' },
+            id: { type: 'number' },
             name: { type: 'string' },
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' },
-            userId: { type: 'string' },
+            userId: { type: 'number' },
           },
         },
       },
     },
   })
 
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'No autorizado.',
-    schema: {
-      properties: {
-        message: { type: 'string' },
-        errors: { type: 'string' },
-        statusCode: { type: 'number' },
-      },
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Categoria no encontrada.',
-    schema: {
-      properties: {
-        message: { type: 'string' },
-        errors: { type: 'string' },
-        statusCode: { type: 'number' },
-      },
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.', schema: {
-      properties: {
-        message: { type: 'string' },
-        errors: { type: 'string' },
-        statusCode: { type: 'number' },
-      },
-    },
-  })
-  async update(@Param('id') id: string, @User() user: JwtPayload, @Body() updateCategoryDto: UpdateCategoryDto) {
+  @ApiDefaultResponses({ includeNotFound: true })
+  async update(@Param('id') id: number, @User() user: JwtPayload, @Body() updateCategoryDto: UpdateCategoryDto) {
     return this.responseService.sendSuccess(
-      await this.categoryService.update(id, { ...updateCategoryDto, userId: user.id })
+      await this.categoryService.update(id, { ...updateCategoryDto, userId: user.id }),
+      'Category updated successfully.'
     );
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Eliminar categoria', description: 'Elimina una categoria por su id y las tareas relacionadas a esta categoria' })
+  @ApiOperation({ summary: 'Delete category', description: 'Deletes a category by its id and the tasks related to this category' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Categoría eliminada.',
+    description: 'Category deleted.',
     schema: {
       type: 'object',
       properties: {
@@ -289,40 +183,21 @@ export class CategoryController {
         data: {
           type: 'object',
           properties: {
-            id: { type: 'string' },
+            id: { type: 'number' },
             name: { type: 'string' },
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' },
-            userId: { type: 'string' },
+            userId: { type: 'number' },
           },
         },
       },
     },
   })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Categoria no encontrada.',
-    schema: {
-      properties: {
-        message: { type: 'string' },
-        errors: { type: 'string' },
-        statusCode: { type: 'number' },
-      },
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Error interno del servidor.', schema: {
-      properties: {
-        message: { type: 'string' },
-        errors: { type: 'string' },
-        statusCode: { type: 'number' },
-      },
-    },
-  })
-  async remove(@Param('id') id: string) {
+  @ApiDefaultResponses({ includeNotFound: true })
+  async remove(@Param('id') id: number) {
     return this.responseService.sendSuccess(
       await this.categoryService.remove(id),
-      'Categoria eliminada correctamente'
+      'Category deleted successfully.'
     );
   }
 }

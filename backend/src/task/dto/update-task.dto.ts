@@ -4,11 +4,11 @@ import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdateTaskDto extends PartialType(CreateTaskDto) {
     @ApiProperty({ example: 'string' })
-    @IsString({ message: 'El id debe ser un string' })
-    @IsNotEmpty({ message: 'El id es obligatorio' })
-    id: string
+    @IsString({ message: 'Id must be a string' })
+    @IsNotEmpty({ message: 'Id is required' })
+    id: number;
 
-    @ApiProperty({ example: 'boolean' })
-    @IsBoolean({ message: 'Completed debe ser un booleano' })
-    completed: boolean
+    @ApiProperty({ example: true })
+    @IsBoolean({ message: 'Completed must be a boolean' })
+    completed: boolean;
 }

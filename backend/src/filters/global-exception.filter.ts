@@ -15,7 +15,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = 'Ocurrió un error inesperado';
+    let message = 'An unexpected error occurred';
     let errors: string | object | [] | null = null;
 
     if (exception instanceof HttpException) {
@@ -25,7 +25,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         errors?: string | object | [] | null;
       };
 
-      // Ahora TypeScript sabe que `responseMessage` es un objeto con 'message' y 'errors'
       message = responseMessage.message || message;
       errors = responseMessage.errors || null;
     } else if (exception instanceof Error) {

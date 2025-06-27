@@ -4,24 +4,24 @@ import { Match } from 'src/common/decorators/match.decorator';
 
 export class RegisterDto {
   @ApiProperty({
-    example: 'usuario@example.com',
-    description: 'Correo electrónico válido',
+    example: 'user@example.com',
+    description: 'Valid email address',
   })
-  @IsEmail({}, { message: 'Debe proporcionar un correo electrónico válido.' })
+  @IsEmail({}, { message: 'You must provide a valid email address.' })
   email: string;
 
   @ApiProperty({
     example: '123456',
-    description: 'Contraseña de al menos 6 caracteres',
+    description: 'Password with at least 6 characters',
   })
-  @MinLength(6, { message: 'La contraseña debe tener al menos 6 caracteres.' })
+  @MinLength(6, { message: 'Password must be at least 6 characters long.' })
   password: string;
 
   @ApiProperty({
     example: '123456',
-    description: 'Confirmación de la contraseña',
+    description: 'Password confirmation',
   })
-  @MinLength(6, { message: 'La contraseña debe tener al menos 6 caracteres.' })
-  @Match('password', { message: 'Las contraseñas no coinciden.' })
+  @MinLength(6, { message: 'Password must be at least 6 characters long.' })
+  @Match('password', { message: 'Passwords do not match.' })
   confirmPassword: string;
 }

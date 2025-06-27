@@ -21,10 +21,10 @@ export class TaskController {
   @Post()
   @UsePipes(new ValidationPipe())
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Crear tarea', description: 'Este endpoint crea una nueva tarea por usuario.' })
+  @ApiOperation({ summary: 'Create task', description: 'This endpoint creates a new task for a user.' })
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'Tarea creada exitosamente.',
+    description: 'Task created successfully.',
     schema: {
       type: 'object',
       properties: {
@@ -33,12 +33,12 @@ export class TaskController {
         data: {
           type: 'object',
           properties: {
-            id: { type: 'string' },
+            id: { type: 'number' },
             name: { type: 'string' },
             description: { type: 'string' },
             dueDate: { type: 'string', format: 'date-time' },
-            userId: { type: 'string' },
-            categoryId: { type: 'string' },
+            userId: { type: 'number' },
+            categoryId: { type: 'number' },
             completed: { type: 'boolean' },
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' },
@@ -51,17 +51,18 @@ export class TaskController {
   async create(@Body() createTaskDto: CreateTaskDto, @User() user: JwtPayload) {
     return this.responseService.sendSuccess(
       await this.taskService.create({ ...createTaskDto, userId: user.id }),
-      'Tarea creada exitosamente',
+      'Task created successfully.',
       HttpStatus.CREATED
     );
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Obtener todas las tareas', description: 'Obtiene todas las tareas.' })
+  @ApiOperation({ summary: 'Get all tasks', description: 'Retrieves all tasks.' })
+
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Tareas.',
+    description: 'Tasks.',
     schema: {
       type: 'object',
       properties: {
@@ -72,15 +73,15 @@ export class TaskController {
           items: {
             type: 'object',
             properties: {
-              id: { type: 'string' },
+              id: { type: 'number' },
               name: { type: 'string' },
               description: { type: 'string' },
               completed: { type: 'boolean' },
               dueDate: { type: 'string', format: 'date-time' },
               createdAt: { type: 'string', format: 'date-time' },
               updatedAt: { type: 'string', format: 'date-time' },
-              userId: { type: 'string' },
-              categoryId: { type: 'string' },
+              userId: { type: 'number' },
+              categoryId: { type: 'number' },
             }
           }
         }
@@ -90,15 +91,16 @@ export class TaskController {
   @ApiDefaultResponses()
   async findAll(@User() user: JwtPayload) {
     return this.responseService.sendSuccess(
-      await this.taskService.findAll(user.id)
+      await this.taskService.findAll(user.id),
+      'Tasks'
     );
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener tarea por id', description: 'Obtiene una tarea por su id.' })
+  @ApiOperation({ summary: 'Get task by id', description: 'Retrieves a task by its id.' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Tarea obtenida.',
+    description: 'Task retrieved.',
     schema: {
       properties: {
         statusCode: { type: 'number' },
@@ -106,12 +108,12 @@ export class TaskController {
         data: {
           type: 'object',
           properties: {
-            id: { type: 'string' },
+            id: { type: 'number' },
             name: { type: 'string' },
             description: { type: 'string' },
             dueDate: { type: 'string', format: 'date-time' },
-            userId: { type: 'string' },
-            categoryId: { type: 'string' },
+            userId: { type: 'number' },
+            categoryId: { type: 'number' },
             completed: { type: 'boolean' },
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' },
@@ -121,17 +123,18 @@ export class TaskController {
     },
   })
   @ApiDefaultResponses({ includeNotFound: true })
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     return this.responseService.sendSuccess(
-      await this.taskService.findOne(id)
+      await this.taskService.findOne(id),
+      'Task retrieved.'
     );
   }
 
   @Get('by-category/:categoryId')
-  @ApiOperation({ summary: 'Obtener tareas por categoria', description: 'Obtiene las tarea por su categoryId' })
+ @ApiOperation({ summary: 'Get tasks by category', description: 'Retrieves tasks by their categoryId' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Tareas obtenidas.',
+    description: 'Tasks retrieved.',
     schema: {
       properties: {
         statusCode: { type: 'number' },
@@ -141,12 +144,12 @@ export class TaskController {
           items: {
             type: 'object',
             properties: {
-              id: { type: 'string' },
+              id: { type: 'number' },
               name: { type: 'string' },
               description: { type: 'string' },
               dueDate: { type: 'string', format: 'date-time' },
-              userId: { type: 'string' },
-              categoryId: { type: 'string' },
+              userId: { type: 'number' },
+              categoryId: { type: 'number' },
               completed: { type: 'boolean' },
               createdAt: { type: 'string', format: 'date-time' },
               updatedAt: { type: 'string', format: 'date-time' },
@@ -157,17 +160,18 @@ export class TaskController {
     },
   })
   @ApiDefaultResponses()
-  async findByCategory(@Param('categoryId') categoryId: string) {
+  async findByCategory(@Param('categoryId') categoryId: number) {
     return this.responseService.sendSuccess(
-      await this.taskService.findByCategory(categoryId)
+      await this.taskService.findByCategory(categoryId),
+      'Tasks retrieved.'
     );
   }
 
   @Patch()
-  @ApiOperation({ summary: 'Actualizar tarea', description: 'Actualiza una tarea' })
+  @ApiOperation({ summary: 'Update task', description: 'Updates a task' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Tarea actualizada.',
+    description: 'Task updated.',
     schema: {
       properties: {
         statusCode: { type: 'number' },
@@ -175,12 +179,12 @@ export class TaskController {
         data: {
           type: 'object',
           properties: {
-            id: { type: 'string' },
+            id: { type: 'number' },
             name: { type: 'string' },
             description: { type: 'string' },
             dueDate: { type: 'string', format: 'date-time' },
-            userId: { type: 'string' },
-            categoryId: { type: 'string' },
+            userId: { type: 'number' },
+            categoryId: { type: 'number' },
             completed: { type: 'boolean' },
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' },
@@ -192,15 +196,16 @@ export class TaskController {
   @ApiDefaultResponses({ includeNotFound: true })
   async update(@Body() updateTaskDto: UpdateTaskDto, @User() user: JwtPayload) {
     return this.responseService.sendSuccess(
-      await this.taskService.update({ ...updateTaskDto, userId: user.id })
+      await this.taskService.update({ ...updateTaskDto, userId: user.id }),
+      'Task updated successfully.'
     );
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar tarea', description: 'Elimina una tarea por su id' })
+  @ApiOperation({ summary: 'Delete task', description: 'Deletes a task by its id' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Tarea eliminada.',
+    description: 'Task deleted.',
     schema: {
       properties: {
         statusCode: { type: 'number' },
@@ -208,12 +213,12 @@ export class TaskController {
         data: {
           type: 'object',
           properties: {
-            id: { type: 'string' },
+            id: { type: 'number' },
             name: { type: 'string' },
             description: { type: 'string' },
             dueDate: { type: 'string', format: 'date-time' },
-            userId: { type: 'string' },
-            categoryId: { type: 'string' },
+            userId: { type: 'number' },
+            categoryId: { type: 'number' },
             completed: { type: 'boolean' },
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' },
@@ -223,9 +228,10 @@ export class TaskController {
     },
   })
   @ApiDefaultResponses({ includeNotFound: true })
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: number) {
     return this.responseService.sendSuccess(
-      await this.taskService.remove(id)
+      await this.taskService.remove(id),
+      'Task deleted successfully.'
     );
   }
 }

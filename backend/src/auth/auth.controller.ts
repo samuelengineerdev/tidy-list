@@ -27,7 +27,7 @@ import { RegisterDto } from './dto/register-dto-dto';
 import { ResponseUserDto } from 'src/user/dto/response-user-dto';
 import { ResponseFormat } from 'src/response/response.interface';
 
-@ApiTags('Auth') // Agrupa los endpoints en Swagger bajo "Auth"
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -38,9 +38,9 @@ export class AuthController {
   @Post('register')
   @UsePipes(new ValidationPipe())
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Registrar usuario', description: 'Este endpoint crea un nuevo usuario en el sistema.' })
+  @ApiOperation({ summary: 'Register user', description: 'This endpoint creates a new user in the system.' })
   @ApiBody({
-    description: 'Datos del nuevo usuario',
+    description: 'New user data',
     schema: {
       properties: {
         email: { type: 'string' },
@@ -51,7 +51,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: 201,
-    description: 'Usuario creado exitosamente.',
+    description: 'User created successfully.',
     schema: {
       properties: {
         statusCode: { type: 'number' },
@@ -59,7 +59,7 @@ export class AuthController {
         data: {
           type: 'object',
           properties: {
-            id: { type: 'string' },
+            id: { type: 'number' },
             email: { type: 'string' },
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' },
@@ -71,7 +71,7 @@ export class AuthController {
 
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Datos inválidos o error de validación.',
+    description: 'Invalid data or validation error.',
     schema: {
       properties: {
         message: { type: 'array', items: { type: 'string' } },
@@ -82,7 +82,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Ha ocurrido un conflicto.',
+    description: 'A conflict has occurred.',
     schema: {
       properties: {
         message: { type: 'string' },
@@ -93,7 +93,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: 'Error interno del servidor.', schema: {
+    description: 'Internal server error.', schema: {
       properties: {
         message: { type: 'string' },
         error: { type: 'string', nullable: true },
@@ -104,7 +104,7 @@ export class AuthController {
   async register(@Body() registerDto: RegisterDto): Promise<ResponseFormat<ResponseUserDto>> {
     return this.responseService.sendSuccess(
       await this.authService.register(registerDto),
-      'Usuario registrado exitosamente',
+      'User registered successfully.',
       HttpStatus.CREATED,
     );
   }
@@ -113,11 +113,11 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe())
   @ApiOperation({
-    summary: 'Iniciar sesión',
-    description: 'Permite a un usuario autenticarse con email y contraseña.',
+    summary: 'Log in',
+    description: 'Allows a user to authenticate using email and password.',
   })
   @ApiBody({
-    description: 'Credenciales del usuario',
+    description: 'User credentials.',
     schema: {
       example: {
         email: 'example@mail.com',
@@ -127,7 +127,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Inicio de sesión exitoso.',
+    description: 'Login successful.',
     schema: {
       properties: {
         statusCode: { type: 'number' },
@@ -138,7 +138,7 @@ export class AuthController {
             user: {
               type: 'object',
               properties: {
-                id: { type: 'string' },
+                id: { type: 'number' },
                 email: { type: 'string' },
                 createdAt: { type: 'string', format: 'date-time' },
                 updatedAt: { type: 'string', format: 'date-time' },
@@ -152,7 +152,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Datos inválidos o error de validación.',
+    description: 'Invalid data or validation error.',
     schema: {
       properties: {
         message: { type: 'array', items: { type: 'string' } },
@@ -163,7 +163,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: 'Credenciales inválidas.',
+    description: 'Invalid credentials.',
     schema: {
       properties: {
         message: { type: 'string' },
@@ -174,7 +174,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: 500,
-    description: 'Error interno del servidor.',
+    description: 'Internal server error.',
     schema: {
       properties: {
         message: { type: 'string' },
@@ -186,7 +186,7 @@ export class AuthController {
   async login(@Body() loginDto: LoginDto) {
     return this.responseService.sendSuccess(
       await this.authService.login(loginDto),
-      'Usurio logueado exitosamente!',
+      'User logged in successfully!',
       HttpStatus.OK
     );
   }
@@ -196,12 +196,12 @@ export class AuthController {
   @ApiBearerAuth('jwt')
   @UseGuards(AuthGuard)
   @ApiOperation({
-    summary: 'Obtener perfil del usuario',
-    description: 'Retorna los datos del usuario autenticado.',
+    summary: 'Get user profile',
+    description: 'Returns the authenticated user’s data.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Perfil del usuario.',
+    description: 'User profile.',
     schema: {
       properties: {
         statusCode: { type: 'number' },
@@ -209,7 +209,7 @@ export class AuthController {
         data: {
           type: 'object',
           properties: {
-            id: { type: 'string' },
+            id: { type: 'number' },
             email: { type: 'string' },
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' },
@@ -221,7 +221,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: 'No autorizado.',
+    description: 'No authorized.',
     schema: {
       properties: {
         message: { type: 'string' },
@@ -233,6 +233,7 @@ export class AuthController {
   getProfile(@Req() req: Request) {
     return this.responseService.sendSuccess(
       req.user,
+      'User profile'
     );
   }
 }

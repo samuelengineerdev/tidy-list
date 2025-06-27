@@ -1,16 +1,15 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserSettings } from 'generated/prisma';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateUserSettingsDto } from './dto/create-user-settings.dto';
 import { UpdateUserSettingsDto } from './dto/update-user-settings.dto';
 
 @Injectable()
 export class UserService {
     constructor(private readonly prismaService: PrismaService) { }
 
-    async getUserSettings(userId: string): Promise<UserSettings> {
+    async getUserSettings(userId: number): Promise<UserSettings> {
         const userSettingsFound = await this.prismaService.userSettings.findFirst({ where: { userId } });
-        if (!userSettingsFound) throw new NotFoundException(`El userSetting no fue encontrado por el userId: ${userId}`);
+        if (!userSettingsFound) throw new NotFoundException(`User settings not found for userId: ${userId}`);
 
         return userSettingsFound;
     }

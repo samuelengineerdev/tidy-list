@@ -31,8 +31,8 @@ describe('UserService (unit tests)', () => {
   });
 
   describe('getUserSettings', () => {
-    it('debería retornar las configuraciones del usuario si existen', async () => {
-      const userId = 'user123';
+    it('should return user settings if they exist', async () => {
+      const userId = 1;
       const mockSettings = { id: 'settings1', userId };
 
       prismaMock.userSettings.findFirst.mockResolvedValueOnce(mockSettings);
@@ -41,18 +41,18 @@ describe('UserService (unit tests)', () => {
       expect(result).toEqual(mockSettings);
     });
 
-    it('debería lanzar NotFoundException si no existen configuraciones del usuario', async () => {
+    it('should throw NotFoundException if user settings do not exist', async () => {
       prismaMock.userSettings.findFirst.mockResolvedValueOnce(null);
 
-      await expect(service.getUserSettings('user123')).rejects.toThrow(NotFoundException);
+      await expect(service.getUserSettings(1)).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('updateUserSettings', () => {
-    it('debería actualizar las configuraciones si existen', async () => {
-      const dto = { darkMode: true, userId: 'user123' };
+    it('should update settings if they exist', async () => {
+      const dto = { darkMode: true, userId: 1 };
 
-      prismaMock.userSettings.findFirst.mockResolvedValueOnce({ id: 'settings1', userId: 'user123' });
+      prismaMock.userSettings.findFirst.mockResolvedValueOnce({ id: 'settings1', userId: 1 });
       prismaMock.userSettings.update.mockResolvedValueOnce({ id: 'settings1', ...dto });
 
       const result = await service.updateUserSettings(dto);
@@ -63,8 +63,8 @@ describe('UserService (unit tests)', () => {
       });
     });
 
-    it('debería crear nuevas configuraciones si no existen', async () => {
-      const dto = { darkMode: true, userId: 'user123' };
+    it('should create new settings if they do not exist', async () => {
+      const dto = { darkMode: true, userId: 1 };
 
       prismaMock.userSettings.findFirst.mockResolvedValueOnce(null);
       prismaMock.userSettings.create.mockResolvedValueOnce({ id: 'settings2', ...dto });
