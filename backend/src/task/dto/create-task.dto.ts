@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger/dist/decorators"
 import { Transform, Type } from "class-transformer"
-import { IsDate, IsNotEmpty, IsOptional, IsString } from "class-validator"
+import { IsDate, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator"
 
 export class CreateTaskDto {
     @ApiProperty({ type: 'string' })
@@ -23,8 +23,8 @@ export class CreateTaskDto {
 
     userId: number
 
-    @ApiProperty({ type: 'string' })
+    @ApiProperty({ type: 'number' })
     @IsNotEmpty({ message: 'Category ID is required' })
-    @IsString({ message: 'CategoryId must be a string' })
+    @IsInt({ message: 'Description must be a number' })
     categoryId: number
 }
