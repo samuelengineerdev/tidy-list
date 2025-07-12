@@ -121,9 +121,9 @@ export class CategoryController {
   })
 
   @ApiDefaultResponses({ includeNotFound: true })
-  async findOne(@Param('id') id: number) {
+  async findOne(@User() user: JwtPayload, @Param('id') id: number) {
     return this.responseService.sendSuccess(
-      await this.categoryService.findOne(id),
+      await this.categoryService.findOne(user.id, id),
       'Category retrieved.'
     );
   }
@@ -164,7 +164,7 @@ export class CategoryController {
   @ApiDefaultResponses({ includeNotFound: true })
   async update(@Param('id') id: number, @User() user: JwtPayload, @Body() updateCategoryDto: UpdateCategoryDto) {
     return this.responseService.sendSuccess(
-      await this.categoryService.update(id, { ...updateCategoryDto, userId: user.id }),
+      await this.categoryService.update(user.id, id, { ...updateCategoryDto, userId: user.id }),
       'Category updated successfully.'
     );
   }
@@ -194,9 +194,9 @@ export class CategoryController {
     },
   })
   @ApiDefaultResponses({ includeNotFound: true })
-  async remove(@Param('id') id: number) {
+  async remove(@User() user: JwtPayload, @Param('id') id: number) {
     return this.responseService.sendSuccess(
-      await this.categoryService.remove(id),
+      await this.categoryService.remove(user.id, id),
       'Category deleted successfully.'
     );
   }

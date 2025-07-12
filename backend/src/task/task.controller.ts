@@ -123,9 +123,9 @@ export class TaskController {
     },
   })
   @ApiDefaultResponses({ includeNotFound: true })
-  async findOne(@Param('id') id: number) {
+  async findOne(@User() user: JwtPayload, @Param('id') id: number) {
     return this.responseService.sendSuccess(
-      await this.taskService.findOne(id),
+      await this.taskService.findOne(user.id, id),
       'Task retrieved.'
     );
   }
@@ -160,9 +160,9 @@ export class TaskController {
     },
   })
   @ApiDefaultResponses()
-  async findByCategory(@Param('categoryId') categoryId: number) {
+  async findByCategory(@User() user: JwtPayload, @Param('categoryId') categoryId: number) {
     return this.responseService.sendSuccess(
-      await this.taskService.findByCategory(categoryId),
+      await this.taskService.findByCategory(user.id, categoryId),
       'Tasks retrieved.'
     );
   }
@@ -196,7 +196,7 @@ export class TaskController {
   @ApiDefaultResponses({ includeNotFound: true })
   async update(@Body() updateTaskDto: UpdateTaskDto, @User() user: JwtPayload) {
     return this.responseService.sendSuccess(
-      await this.taskService.update({ ...updateTaskDto, userId: user.id }),
+      await this.taskService.update(user.id, { ...updateTaskDto, userId: user.id }),
       'Task updated successfully.'
     );
   }
@@ -228,9 +228,9 @@ export class TaskController {
     },
   })
   @ApiDefaultResponses({ includeNotFound: true })
-  async remove(@Param('id') id: number) {
+  async remove(@User() user: JwtPayload,@Param('id') id: number) {
     return this.responseService.sendSuccess(
-      await this.taskService.remove(id),
+      await this.taskService.remove(user.id, id),
       'Task deleted successfully.'
     );
   }

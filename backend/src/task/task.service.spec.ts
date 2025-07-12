@@ -86,7 +86,7 @@ describe('TaskService (unit tests)', () => {
   describe('findAll', () => {
     it('should return all tasks for the user', async () => {
       const userId = 1;
-      const mockTasks = [{ id: 1 }, { id: 'task2' }];
+      const mockTasks = [{ id: 1, userId }, { id: 2, userId }];
       prismaMock.task.findMany.mockResolvedValueOnce(mockTasks);
 
       const result = await service.findAll(userId);
@@ -96,84 +96,89 @@ describe('TaskService (unit tests)', () => {
   });
 
   describe('findOne', () => {
-    it('should return the task if it exists', async () => {
+    it('should return the task if it exists and belongs to the user', async () => {
+      const userId = 1;
       const taskId = 1;
-      const mockTask = { id: taskId };
+      const mockTask = { id: taskId, userId };
       prismaMock.task.findFirst.mockResolvedValueOnce(mockTask);
 
-      const result = await service.findOne(taskId);
+      const result = await service.findOne(userId, taskId);
       expect(result).toEqual(mockTask);
     });
 
     it('should throw NotFoundException if the task is not found', async () => {
+      const userId = 1;
       const taskId = 1;
       prismaMock.task.findFirst.mockResolvedValueOnce(null);
 
-      await expect(service.findOne(taskId)).rejects.toThrow(NotFoundException);
+      await expect(service.findOne(userId, taskId)).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('findByCategory', () => {
     it('should return tasks by category', async () => {
+      const userId = 1;
       const categoryId = 1;
-      const mockTasks = [{ id: 1 }, { id: 'task2' }];
+      const mockTasks = [{ id: 1, categoryId, userId }, { id: 2, categoryId, userId }];
       prismaMock.task.findMany.mockResolvedValueOnce(mockTasks);
 
-      const result = await service.findByCategory(categoryId);
+      const result = await service.findByCategory(userId, categoryId);
       expect(result).toEqual(mockTasks);
     });
   });
 
   describe('update', () => {
     it('should update a task if it exists and the category is valid', async () => {
+      const userId = 1;
       const dto = {
         id: 1,
         name: 'Updated',
         completed: true,
-        userId: 1,
         categoryId: 1,
       };
 
-      prismaMock.task.findFirst.mockResolvedValueOnce({ id: 1 });
-      prismaMock.category.findFirst.mockResolvedValueOnce({ id: 1 });
-      prismaMock.task.update.mockResolvedValueOnce({ ...dto });
+      prismaMock.task.findFirst.mockResolvedValueOnce({ id: dto.id, userId });
+      prismaMock.category.findFirst.mockResolvedValueOnce({ id: dto.categoryId, userId });
+      prismaMock.task.update.mockResolvedValueOnce({ ...dto, userId });
 
-      const result = await service.update(dto);
-      expect(result).toEqual({ ...dto });
+      const result = await service.update(userId, dto);
+      expect(result).toEqual({ ...dto, userId });
     });
 
     it('should throw NotFoundException if the category does not exist', async () => {
+      const userId = 1;
       const dto = {
         id: 1,
         name: 'Updated',
         completed: true,
-        userId: 1,
         categoryId: 1,
       };
 
-      prismaMock.task.findFirst.mockResolvedValueOnce({ id: 1 });
+      prismaMock.task.findFirst.mockResolvedValueOnce({ id: dto.id, userId });
       prismaMock.category.findFirst.mockResolvedValueOnce(null);
 
-      await expect(service.update(dto)).rejects.toThrow(NotFoundException);
+      await expect(service.update(userId, dto)).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('remove', () => {
-    it('should delete a task if it exists', async () => {
+    it('should delete a task if it exists and belongs to the user', async () => {
+      const userId = 1;
       const taskId = 1;
-      const mockTask = { id: taskId };
+      const mockTask = { id: taskId, userId };
       prismaMock.task.findFirst.mockResolvedValueOnce(mockTask);
       prismaMock.task.delete.mockResolvedValueOnce(mockTask);
 
-      const result = await service.remove(taskId);
+      const result = await service.remove(userId, taskId);
       expect(result).toEqual(mockTask);
     });
 
     it('should throw NotFoundException if the task is not found', async () => {
+      const userId = 1;
       const taskId = 1;
       prismaMock.task.findFirst.mockResolvedValueOnce(null);
 
-      await expect(service.remove(taskId)).rejects.toThrow(NotFoundException);
+      await expect(service.remove(userId, taskId)).rejects.toThrow(NotFoundException);
     });
   });
 });

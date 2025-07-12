@@ -9,8 +9,8 @@ export class CategoryService {
 
   constructor(private readonly prismaService: PrismaService) { }
 
-  async existCategory(id: number): Promise<Category> {
-    const foundCategory = await this.prismaService.category.findFirst({ where: { id } });
+  async existCategory(userId: number, id: number): Promise<Category> {
+    const foundCategory = await this.prismaService.category.findFirst({ where: { userId, id } });
     if (!foundCategory) throw new NotFoundException(`Category not found with id: ${id}`);
 
     return foundCategory;
@@ -31,19 +31,19 @@ export class CategoryService {
     return await this.prismaService.category.findMany({ where: { userId } });
   }
 
-  async findOne(id: number): Promise<Category> {
-    const foundCategory = await this.existCategory(id);
+  async findOne(userId: number, id: number): Promise<Category> {
+    const foundCategory = await this.existCategory(userId, id);
 
     return foundCategory;
   }
 
-  async update(id: number, updateCategoryDto: UpdateCategoryDto): Promise<Category> {
-    await this.existCategory(id);
-    return await this.prismaService.category.update({ data: updateCategoryDto, where: { id } })
+  async update(userId: number, id: number, updateCategoryDto: UpdateCategoryDto): Promise<Category> {
+    await this.existCategory(userId, id);
+    return await this.prismaService.category.update({ data: updateCategoryDto, where: { userId, id } })
   }
 
-  async remove(id: number): Promise<Category> {
-    await this.existCategory(id);
-    return await this.prismaService.category.delete({ where: { id } });
+  async remove(userId: number, id: number): Promise<Category> {
+    await this.existCategory(userId, id);
+    return await this.prismaService.category.delete({ where: { userId, id } });
   }
 }

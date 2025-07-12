@@ -64,42 +64,70 @@ describe('CategoryService (unit tests)', () => {
   });
 
   describe('findOne()', () => {
-    it('should return a category by ID', async () => {
-      const category = { id: 1, name: 'Work', userId: 1 };
+    it('should return a category by ID and userId', async () => {
+      const userId = 1;
+      const categoryId = 1;
+      const category = { id: categoryId, name: 'Work', userId };
       prismaMock.category.findFirst.mockResolvedValue(category);
 
-      const result = await service.findOne(1);
+      const result = await service.findOne(userId, categoryId);
       expect(result).toEqual(category);
     });
 
     it('should throw NotFoundException if it does not exist', async () => {
+      const userId = 1;
+      const categoryId = 999;
       prismaMock.category.findFirst.mockResolvedValue(null);
 
-      await expect(service.findOne(1)).rejects.toThrow(NotFoundException);
+      await expect(service.findOne(userId, categoryId)).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('update()', () => {
     it('should update an existing category', async () => {
-      const category = { id: 1, name: 'Old', userId: 1 };
-      const updateDto = { name: 'New', userId: 1 };
+      const userId = 1;
+      const categoryId = 1;
+      const updateDto = { name: 'New name' };
+      const existingCategory = { id: categoryId, name: 'Old name', userId };
 
-      prismaMock.category.findFirst.mockResolvedValue(category);
-      prismaMock.category.update.mockResolvedValue({ ...category, ...updateDto });
+      prismaMock.category.findFirst.mockResolvedValue(existingCategory);
+      prismaMock.category.update.mockResolvedValue({ ...existingCategory, ...updateDto });
 
-      const result = await service.update(1, updateDto);
-      expect(result).toEqual({ ...category, ...updateDto });
+      const result = await service.update(userId, categoryId, updateDto);
+      expect(result).toEqual({ ...existingCategory, ...updateDto });
+    });
+
+    it('should throw NotFoundException if the category does not exist', async () => {
+      const userId = 1;
+      const categoryId = 1;
+      const updateDto = { name: 'New name' };
+
+      prismaMock.category.findFirst.mockResolvedValue(null);
+
+      await expect(service.update(userId, categoryId, updateDto)).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('remove()', () => {
     it('should remove an existing category', async () => {
-      const category = { id: 1, name: 'Work', userId: 1 };
+      const userId = 1;
+      const categoryId = 1;
+      const category = { id: categoryId, name: 'Work', userId };
+
       prismaMock.category.findFirst.mockResolvedValue(category);
       prismaMock.category.delete.mockResolvedValue(category);
 
-      const result = await service.remove(1);
+      const result = await service.remove(userId, categoryId);
       expect(result).toEqual(category);
+    });
+
+    it('should throw NotFoundException if the category does not exist', async () => {
+      const userId = 1;
+      const categoryId = 1;
+
+      prismaMock.category.findFirst.mockResolvedValue(null);
+
+      await expect(service.remove(userId, categoryId)).rejects.toThrow(NotFoundException);
     });
   });
 });
