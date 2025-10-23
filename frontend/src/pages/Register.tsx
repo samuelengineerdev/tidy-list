@@ -85,7 +85,7 @@ const Register = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  icon={showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                  icon={showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                   onIconClick={() => setShowPassword(prev => !prev)}
                 />
               </div>
@@ -99,7 +99,7 @@ const Register = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  icon={showConfirmPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                  icon={showConfirmPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                   onIconClick={() => setShowConfirmPassword(prev => !prev)}
                 />
               </div>

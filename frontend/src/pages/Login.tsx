@@ -79,7 +79,7 @@ const Login = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  icon={showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                  icon={showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                   onIconClick={() => setShowPassword(prev => !prev)}
                 />
               </div>
