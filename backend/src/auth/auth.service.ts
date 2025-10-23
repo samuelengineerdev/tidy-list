@@ -43,7 +43,6 @@ export class AuthService {
 
       return createdUser;
     } catch (error) {
-      console.log(error);
       if (error instanceof ConflictException) {
         throw error;
       }
