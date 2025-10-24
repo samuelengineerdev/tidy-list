@@ -10,6 +10,7 @@ import { Toast } from "@/components/Toast";
 import { useTheme } from "@/contexts/ThemeContext";
 import { authService } from "@/services/authService";
 import { Eye, EyeClosed, EyeClosedIcon, EyeOff, LucideEye, LucideEyeOff } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 const defaultUserEmail = (import.meta as any).env?.VITE_DEFAULT_USER_EMAIL || "";
 const defaultUserpassword = (import.meta as any).env?.VITE_DEFAULT_USER_PASSWORD || "";
@@ -33,7 +34,7 @@ const Login = () => {
       Toast.success("Welcome back!");
       navigate("/tasks");
     } catch (error) {
-      // Toast.error(error instanceof Error ? error.message : "Login error");
+      Toast.error(error instanceof Error ? error.message : "Login error");
     } finally {
       setIsLoading(false);
     }
@@ -89,7 +90,7 @@ const Login = () => {
                 className="w-full"
                 disabled={isLoading}
               >
-                {isLoading ? "Signing In..." : "Sign In"}
+                {isLoading ? <Spinner color="white" /> : "Sign In"}
               </Button>
             </form>
 

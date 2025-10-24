@@ -37,7 +37,7 @@ export function ThemeProvider({
       const savedTheme = settings.darkMode ? "dark" : "light";
       setThemeState(savedTheme);
     } catch (error) {
-      console.log("No settings found, using default");
+      console.error("No settings found, using default");
     } finally {
       setIsLoading(false);
     }
