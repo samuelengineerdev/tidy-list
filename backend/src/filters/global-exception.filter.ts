@@ -11,6 +11,7 @@ import { ResponseFormat } from 'src/response/response.interface';
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
+    console.error(exception);
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
