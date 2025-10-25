@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+    :root {
+      /* Brand colors - TaskFlow */
+      --brand-purple: 264 47% 36%;        /* #4B357D */
+      --brand-orange: 31 93% 60%;         /* #F99437 */
+      --brand-text: 0 0% 10%;             /* #1A1A1A */
+      --brand-bg-blue: 204 100% 97%;      /* #F0F9FF */
+      --brand-bg-gray: 210 20% 98%;       /* #F9FAFB */
+      
+      /* Semantic tokens */
+      --background: 210 20% 98%;          /* #F9FAFB - main background */
+      --foreground: 0 0% 10%;             /* #1A1A1A - main text */
+  
+      --card: 0 0% 100%;                  /* White cards */
+      --card-foreground: 0 0% 10%;
+  
+      --popover: 0 0% 100%;
+      --popover-foreground: 0 0% 10%;
+  
+      --primary: 31 93% 60%;              /* Orange for primary actions */
+      --primary-foreground: 0 0% 100%;
+  
+      --secondary: 264 47% 36%;           /* Purple for secondary elements */
+      --secondary-foreground: 0 0% 100%;
+  
+      --muted: 210 20% 96%;
+      --muted-foreground: 0 0% 45%;
+  
+      --accent: 204 100% 97%;             /* Light blue accent */
+      --accent-foreground: 0 0% 10%;
+  
+      --destructive: 0 84% 60%;
+      --destructive-foreground: 0 0% 100%;
+  
+      --border: 214 32% 91%;
+      --input: 214 32% 91%;
+      --ring: 31 93% 60%;                 /* Orange ring */
+  
+      --radius: 0.75rem;                  /* Rounded corners */
+    }
+  
+    .dark {
+      --background: 0 0% 10%;             /* Dark background */
+      --foreground: 0 0% 98%;             /* Light text */
+  
+      --card: 0 0% 14%;                   /* Dark cards */
+      --card-foreground: 0 0% 98%;
+  
+      --popover: 0 0% 14%;
+      --popover-foreground: 0 0% 98%;
+  
+      --primary: 31 93% 60%;              /* Keep orange */
+      --primary-foreground: 0 0% 100%;
+  
+      --secondary: 264 47% 46%;           /* Lighter purple in dark */
+      --secondary-foreground: 0 0% 100%;
+  
+      --muted: 0 0% 20%;
+      --muted-foreground: 0 0% 65%;
+  
+      --accent: 204 100% 20%;             /* Darker blue accent */
+      --accent-foreground: 0 0% 98%;
+  
+      --destructive: 0 84% 60%;
+      --destructive-foreground: 0 0% 100%;
+  
+      --border: 0 0% 20%;
+      --input: 0 0% 20%;
+      --ring: 31 93% 60%;
+    }
+  }
