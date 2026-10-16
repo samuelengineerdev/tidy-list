@@ -194,7 +194,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">My Tasks</h1>
-              <p className="mt-1 text-muted-foreground">
+              <p className="mt-1 text-textMuted-foreground">
                 Organize and manage your activities
               </p>
             </div>
@@ -228,7 +228,7 @@ const Index = () => {
 
             ) : filteredTasks.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-muted-foreground">
+                <p className="text-textMuted-foreground">
                   {searchQuery || statusFilter !== "all" || categoryFilter !== "all"
                     ? "No tasks found with those filters"
                     : "No tasks yet. Create your first one!"}

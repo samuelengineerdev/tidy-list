@@ -95,7 +95,7 @@ const Login = () => {
             </form>
 
             <div className="mt-4 text-center text-sm">
-              <span className="text-muted-foreground">
+              <span className="text-textMuted-foreground">
                 Don't have an account?{" "}
               </span>
               <Link
@@ -111,7 +111,7 @@ const Login = () => {
         <div className="text-center">
           <Link
             to="/"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="text-sm text-textMuted-foreground hover:text-foreground transition-colors"
           >
             ← Back to Home
           </Link>

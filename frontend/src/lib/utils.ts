@@ -14,7 +14,7 @@ export function getTaskStatusClass(task: { completed: boolean; dueDate: string |
   dueDate.setHours(0, 0, 0, 0);
 
   if (task.completed) {
-    return "text-muted-foreground"; // Task is completed
+    return "text-textMuted-foreground"; // Task is completed
   }
 
   if (dueDate.getTime() < today.getTime()) {

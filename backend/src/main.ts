@@ -10,16 +10,16 @@ async function bootstrap() {
   // Configurar dominios permitidos desde .env
   const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',').map(origin => origin.trim()) || [];
 
-  app.enableCors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'), false);
-      }
-    },
-    credentials: false, // si usas cookies/autenticación
-  });
+  // app.enableCors({
+  //   origin: (origin, callback) => {
+  //     if (!origin || allowedOrigins.includes(origin)) {
+  //       callback(null, true);
+  //     } else {
+  //       callback(new Error('Not allowed by CORS'), false);
+  //     }
+  //   },
+  //   credentials: false, // si usas cookies/autenticación
+  // });
 
 
   app.useGlobalFilters(new GlobalExceptionFilter());

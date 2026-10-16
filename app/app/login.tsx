@@ -1,3 +1,6 @@
+import { useLoginMutation } from '@/api/auth-api';
+import { useHandleError } from '@/api/handle-error';
+import { useLazyGetUserSettingsQuery } from '@/api/user-settings-api';
 import Logo from '@/components/logo';
 import { Box } from '@/components/ui/box';
 import { Button, ButtonText } from '@/components/ui/button';
@@ -5,25 +8,68 @@ import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/heading';
 import { EyeIcon, EyeOffIcon } from '@/components/ui/icon';
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
-import React, { useState } from 'react';
-import { ScrollView, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAppToast } from '@/hooks/use-app-toast';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { logIn } from '@/store/slices/authSlice';
+import { setTheme } from '@/store/slices/user-setting-slice';
+import { isValidEmail } from '@/utils/validations';
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Pressable, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('smtest1@mail.com');
+    const [password, setPassword] = useState('123456');
     const [showPassword, setShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const toast = useAppToast();
+    const handleError = useHandleError();
+
+    const [getuserSettings, { }] = useLazyGetUserSettingsQuery();
+
+    const dispatch = useAppDispatch();
+    const auth = useAppSelector((state) => state.auth);
+
+    const [loginMutation, { isLoading }] = useLoginMutation();
 
     const togglePassword = () => setShowPassword(prev => !prev);
 
-    const handleSubmit = () => {
-        // TODO: Implement login logic
-        console.log('Login attempt:', { email, password });
+    const handleSubmit = async () => {
+        if (!email || !password) {
+            toast.info('Please fill in all the fields');
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            toast.info('Please enter a valid email')
+            return;
+        }
+
+        try {
+            const result = await loginMutation({ email, password }).unwrap();
+            toast.success(result.message);
+            // toast.success('Test');
+            // toast.info('Test');
+            // toast.error('Test');
+
+            dispatch(logIn(result.data));
+
+            try {
+                const userSettingsResult = await getuserSettings().unwrap();
+                dispatch(setTheme(userSettingsResult.data));
+            } catch (error) { console.log(error) }
+
+            router.push('/(main)');
+
+        } catch (error) {
+            console.log(error)
+            // handleError.handleApiError(error);
+        }
+
     };
 
     const navigateToRegister = () => {
@@ -49,7 +95,7 @@ export default function LoginScreen() {
                                 <Heading className="text-2xl font-bold text-card-foreground">
                                     Sign In
                                 </Heading>
-                                <Text className="text-muted-foreground">
+                                <Text className="text-textMuted-foreground">
                                     Enter your email and password to access
                                 </Text>
                             </VStack>
@@ -95,14 +141,14 @@ export default function LoginScreen() {
                                     disabled={isLoading}
                                 >
                                     <ButtonText className="text-primary-foreground font-medium">
-                                        {isLoading ? 'Signing In...' : 'Sign In'}
+                                        {isLoading ? <Spinner /> : 'Sign In'}
                                     </ButtonText>
                                 </Button>
                             </VStack>
 
                             {/* Footer Links */}
                             <VStack space="xs" className="items-center">
-                                <Text className="text-sm text-muted-foreground">
+                                <Text className="text-sm text-textMuted-foreground">
                                     Don't have an account?{' '}
                                 </Text>
                                 <Pressable onPress={navigateToRegister}>

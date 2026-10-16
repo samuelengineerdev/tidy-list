@@ -30,6 +30,11 @@ module.exports = {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
+        brand: {
+          purple: 'hsl(var(--brand-purple))',
+          orange: 'hsl(var(--brand-orange))',
+          text: 'hsl(var(--brand-text))',
+        },
         
         tertiary: {
           50: 'rgb(var(--color-tertiary-50)/<alpha-value>)',

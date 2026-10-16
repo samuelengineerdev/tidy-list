@@ -50,7 +50,7 @@ const TaskCard = ({ task, onToggleComplete, onEdit, onDelete }: TaskCardProps) =
           <div>
             <h3
               className={`font-semibold transition-smooth ${
-                task.completed ? "text-muted-foreground line-through" : ""
+                task.completed ? "text-textMuted-foreground line-through" : ""
               }`}
             >
               {task.name}
@@ -58,7 +58,7 @@ const TaskCard = ({ task, onToggleComplete, onEdit, onDelete }: TaskCardProps) =
             {task.description && (
               <p
                 className={`mt-1 text-sm ${
-                  task.completed ? "text-muted-foreground/70" : "text-muted-foreground"
+                  task.completed ? "text-textMuted-foreground/70" : "text-textMuted-foreground"
                 }`}
               >
                 {task.description}
@@ -71,7 +71,7 @@ const TaskCard = ({ task, onToggleComplete, onEdit, onDelete }: TaskCardProps) =
               {task.category}
             </Badge>
             
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1 text-xs text-textMuted-foreground">
               <Calendar className="h-3 w-3" />
               <span className={`${getTaskStatusClass(task)} font-medium`}>
                 {format(task.dueDate, "d MMM yyyy", { locale: es })}

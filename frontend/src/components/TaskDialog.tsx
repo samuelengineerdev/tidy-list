@@ -259,7 +259,7 @@ const TaskDialog = ({ open, onOpenChange, task, onSave, categories, loadCategori
                     variant="outline"
                     className={cn(
                       "w-full justify-start text-left font-normal",
-                      !dueDate && "text-muted-foreground"
+                      !dueDate && "text-textMuted-foreground"
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />

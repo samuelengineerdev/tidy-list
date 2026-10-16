@@ -32,7 +32,7 @@ const Landing = () => {
             Organize your life with{" "}
             <span className="text-primary">simplicity</span>
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-textMuted-foreground max-w-2xl mx-auto">
             The clearest and most productive way to manage your daily tasks. Minimalist, powerful, and easy to use.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
@@ -61,7 +61,7 @@ const Landing = () => {
                 <CheckCircle className="h-6 w-6 text-primary" />
               </div>
               <h3 className="font-semibold">Simple Tasks</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-textMuted-foreground">
                 Create, edit, and complete tasks in seconds
               </p>
             </div>
@@ -71,7 +71,7 @@ const Landing = () => {
                 <Calendar className="h-6 w-6 text-primary" />
               </div>
               <h3 className="font-semibold">Due Dates</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-textMuted-foreground">
                 Never miss an important date
               </p>
             </div>
@@ -81,7 +81,7 @@ const Landing = () => {
                 <Filter className="h-6 w-6 text-primary" />
               </div>
               <h3 className="font-semibold">Powerful Filters</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-textMuted-foreground">
                 Find what you need instantly
               </p>
             </div>
@@ -91,7 +91,7 @@ const Landing = () => {
                 <Zap className="h-6 w-6 text-primary" />
               </div>
               <h3 className="font-semibold">Super Fast</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-textMuted-foreground">
                 Clean, distraction-free design
               </p>
             </div>
@@ -105,7 +105,7 @@ const Landing = () => {
           <h2 className="text-3xl font-bold">
             Ready to be more productive?
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-textMuted-foreground">
             Join thousands of users already organizing their life with Tidy List
           </p>
           <Button size="lg" className="gap-2" asChild>
@@ -119,7 +119,7 @@ const Landing = () => {
       {/* Footer */}
       <footer className="border-t py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-center text-sm text-textMuted-foreground">
             © 2025 Tidy List. All rights reserved.
           </p>
         </div>
